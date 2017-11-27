@@ -1,8 +1,13 @@
+// Import the CSS
 import 'foundation-sites/dist/css/foundation.css';
 import './style.css';
 
+// Vendor Modules
 import $ from 'jquery';
 import _ from 'underscore';
+
+// Our components
+import Book from 'models/book';
 
 const rawBookData = [
   {
