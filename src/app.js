@@ -1,8 +1,20 @@
+// app.js
+import $ from 'jquery';
+import _ from 'underscore';
+
 import 'foundation-sites/dist/css/foundation.css';
 import './style.css';
 
-import $ from 'jquery';
-import _ from 'underscore';
+import Book from './models/book';
+
+const codingInterview = new Book({
+  title: 'Cracking the Coding Interview',
+  author: 'Gale',
+  publication_year: 2011,
+  illustrator: 'Bob Ross',
+});
+
+console.log(codingInterview);
 
 const rawBookData = [
   {
@@ -19,6 +31,8 @@ const rawBookData = [
     publication_year: 1969
   }
 ];
+
+console.log('welcome to webpack!');
 
 // Starts undefined - we'll set this in $(document).ready
 // once we know the template is available
