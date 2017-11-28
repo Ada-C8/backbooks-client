@@ -42,10 +42,32 @@ const render = function render(bookList) {
   });
 };
 
+const addBookHandler = function(event) {
+  event.preventDefault();
+  
+  const bookData = {};
+  const BOOK_FIELDS = ['title', 'author', 'publication_year'];
+
+  BOOK_FIELDS.forEach((field) => {
+    const inputElement = $(`#add-book-form input[name="${ field }"]`);
+    const value = inputElement.val();
+    bookData[field] = value;
+
+    inputElement.val('');
+  });
+
+  console.log("Read book data");
+  console.log(bookData);
+
+  bookList.add(bookData);
+};
+
 $(document).ready(() => {
   bookTemplate = _.template($('#book-template').html());
 
   render(bookList);
+
+  bookList.on('update', render);
 
   const book = bookList.add({
     title: 'Ancillary Justice',
@@ -54,22 +76,21 @@ $(document).ready(() => {
     page_count: 12334
   });
 
-  render(bookList);
+  $('#add-book-form').on('submit', addBookHandler);
+
+
+
+
+
 
   //
-  // console.log(bookList);
+  // render(bookList);
   //
-
-  //
-  // // bookList.remove(book);
-  //
-  // bookList.forEach((book) => {
-  //   console.log(`${ book.get('title') } by ${ book.get('author') }`);
-  // });
-  //
-  // // look for books where the author name includes the letter 'a'
-  // const subList = bookList.select((book) => {
-  //   return book.get('author').includes('a')
-  // });
-  // console.log(subList);
+  // const testHandler = function(eventData, second) {
+  //   console.log('In the test handler');
+  //   console.log(eventData);
+  //   console.log(second);
+  // };
+  // bookList.on('test', testHandler, bookList);
+  // bookList.trigger('test', 'message1', 'message2');
 });
