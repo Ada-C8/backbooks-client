@@ -7,7 +7,7 @@ import $ from 'jquery';
 import _ from 'underscore';
 
 // Our components
-import Book from 'models/book';
+import BookList from './collections/book_list';
 
 const rawBookData = [
   {
@@ -24,15 +24,52 @@ const rawBookData = [
     publication_year: 1969
   }
 ];
+const bookList = new BookList(rawBookData);
 
 // Starts undefined - we'll set this in $(document).ready
 // once we know the template is available
 let bookTemplate;
 
 const render = function render(bookList) {
+  // iterate through the bookList, generate HTML
+  // for each model and attatch it to the DOM
+  const bookTableElement = $('#book-list');
+  bookTableElement.html('');
 
+  bookList.forEach((book) => {
+    const generatedHTML = bookTemplate(book.attributes);
+    bookTableElement.append(generatedHTML);
+  });
 };
 
 $(document).ready(() => {
   bookTemplate = _.template($('#book-template').html());
+
+  render(bookList);
+
+  const book = bookList.add({
+    title: 'Ancillary Justice',
+    author: 'Ann Leckie',
+    publication_year: 2013,
+    page_count: 12334
+  });
+
+  render(bookList);
+
+  //
+  // console.log(bookList);
+  //
+
+  //
+  // // bookList.remove(book);
+  //
+  // bookList.forEach((book) => {
+  //   console.log(`${ book.get('title') } by ${ book.get('author') }`);
+  // });
+  //
+  // // look for books where the author name includes the letter 'a'
+  // const subList = bookList.select((book) => {
+  //   return book.get('author').includes('a')
+  // });
+  // console.log(subList);
 });

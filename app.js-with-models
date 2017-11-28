@@ -1,0 +1,77 @@
+// Import the CSS
+import 'foundation-sites/dist/css/foundation.css';
+import './style.css';
+
+// Vendor Modules
+import $ from 'jquery';
+import _ from 'underscore';
+
+// Our components
+import Book from './models/book';
+
+const rawBookData = [
+  {
+    title: 'Practical Object-Oriented Design in Ruby',
+    author: 'Sandy Metz',
+    publication_year: 2012
+  }, {
+    title: 'Parable of the Sower',
+    author: 'Octavia Butler',
+    publication_year: 1993
+  }, {
+    title: 'A Wizard of Earthsea',
+    author: 'Ursula K. Le Guin',
+    publication_year: 1969
+  }
+];
+
+// Starts undefined - we'll set this in $(document).ready
+// once we know the template is available
+let bookTemplate;
+
+const render = function render(bookList) {
+
+};
+
+$(document).ready(() => {
+  bookTemplate = _.template($('#book-template').html());
+
+  const myBook = new Book({
+    title: 'Ancillary Justice',
+    author: 'Ann Leckie',
+    publication_year: 2013
+  });
+
+  console.log(myBook);
+
+  // Use '.get(key)' and '.set(key, value)' to access attributes
+  console.log(myBook.author);   // undefined
+  console.log(myBook.get('author'));  // Ann Leckie
+
+  myBook.set('author', 'Dan Roberts');
+  console.log(myBook.get('author'));
+
+  // myBook.unset('author');
+  console.log(myBook.get('author'));
+
+  // not so good
+  // myBook.attributes.author = 'Dan Roberts';
+
+  // Re-set an unset value
+  myBook.set('author', 'Ann Leckie');
+
+  // You can set whatever you want!
+  myBook.set('currently_checked_out', true);
+
+  myBook.get('does_not_exist');
+  // undefined
+
+
+  // get a "read-only" copy of the attributes
+  console.log(myBook.attributes);
+
+  // How do we get the book onto the page?
+  const generatedHTML = $(bookTemplate(myBook.attributes));
+  $('#book-list').append(generatedHTML);
+
+});
