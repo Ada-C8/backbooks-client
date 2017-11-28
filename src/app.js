@@ -23,34 +23,8 @@ const codingInterview = new Book({
 //
 // console.log(codingInterview);
 
-const rawBookData = [
-  {
-    title: 'Practical Object-Oriented Design in Ruby',
-    author: 'Sandy Metz',
-    publication_year: 2012
-  }, {
-    title: 'Parable of the Sower',
-    author: 'Octavia Butler',
-    publication_year: 1993
-  }, {
-    title: 'A Wizard of Earthsea',
-    author: 'Ursula K. Le Guin',
-    publication_year: 1969
-  }
-];
-
-const bookList = new BookList(rawBookData);
+const bookList = new BookList();
 bookList.add(codingInterview);
-
-bookList.add({
-  title: 'The Great Gatsby',
-  author: 'F. Scott Fitzgerald',
-  publication_year: 1922,
-});
-
-
-
-
 
 // Starts undefined - we'll set this in $(document).ready
 // once we know the template is available
@@ -102,12 +76,20 @@ const events = {
     console.log(bookData);
     const book = new Book(bookData);
     bookList.add(book);
+    book.save({}, {
+      success: events.successfullSave,
+      error: events.failedSave,
+    });
   },
   sortBooks(event) {
+    // remove current-sort-field from the class
+    // list of any element that has it.
     $('.current-sort-field').removeClass('current-sort-field');
+    // Add the class to the current selected element
+    $(this).addClass('current-sort-field');
+    // Get the class list of the selected element
     const classes = $(this).attr('class').split(/\s+/);
 
-    $(this).addClass('current-sort-field');
     classes.forEach((className) => {
       if (fields.includes(className)) {
         if (className === bookList.comparator) {
@@ -120,9 +102,19 @@ const events = {
         }
       }
     });
-    // 1.  Fix the styling
-    // 2.  Work on the reverse scenario
-
+  },
+  successfullSave(book, response) {
+    console.log('Success!');
+    console.log(book);
+    console.log(response);
+    $('#status-messages ul').empty();
+    $('#status-messages ul').append(`<li>${book.get('title')} added!</li>`);
+    $('#status-messages').show();
+  },
+  failedSave(book, response) {
+    console.log('ERROR!');
+    console.log(book);
+    console.log(response);
   },
 };
 
@@ -134,10 +126,5 @@ $(document).ready(() => {
   bookList.on('update', render, bookList);
   bookList.on('sort', render, bookList);
 
-  render(bookList);
-
-
-
-
-
+  bookList.fetch();
 });
