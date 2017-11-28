@@ -84,16 +84,57 @@ const bogusListener = function bogusListener(event)  {
 };
 
 // 2.  Register the Event Handler with the Component
-bookList.on('bogus', bogusListener,  bookList);
+bookList.on('bogus', bogusListener);
 
 // 3.  Trigger the event
 bookList.trigger('bogus', 'Argument!');
 
+const fields = ['title', 'author', 'publication_year'];
+
+const events = {
+  addBook(event) {
+    event.preventDefault();
+    const bookData = {};
+    fields.forEach( (field) => {
+      bookData[field] = $(`input[name=${field}]`).val();
+    });
+    console.log('Book Added');
+    console.log(bookData);
+    const book = new Book(bookData);
+    bookList.add(book);
+  },
+  sortBooks(event) {
+    $('.current-sort-field').removeClass('current-sort-field');
+    const classes = $(this).attr('class').split(/\s+/);
+
+    $(this).addClass('current-sort-field');
+    classes.forEach((className) => {
+      if (fields.includes(className)) {
+        if (className === bookList.comparator) {
+          bookList.models.reverse();
+          bookList.trigger('sort', bookList);
+        }
+        else {
+          bookList.comparator = className;
+          bookList.sort();
+        }
+      }
+    });
+    // 1.  Fix the styling
+    // 2.  Work on the reverse scenario
+
+  },
+};
+
 
 $(document).ready(() => {
   bookTemplate = _.template($('#book-template').html());
+  $('#add-book-form').submit(events.addBook);
+  $('.sort').click(events.sortBooks);
+  bookList.on('update', render, bookList);
+  bookList.on('sort', render, bookList);
 
-    render(bookList);
+  render(bookList);
 
 
 
