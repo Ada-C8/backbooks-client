@@ -17,11 +17,11 @@ const codingInterview = new Book({
   illustrator: 'Bob Ross',
 });
 
-codingInterview.set('title', 'The Lord of the Flies');
-console.log(`Title is ${codingInterview.get('title')}`);
-
-
-console.log(codingInterview);
+// codingInterview.set('title', 'The Lord of the Flies');
+// console.log(`Title is ${codingInterview.get('title')}`);
+//
+//
+// console.log(codingInterview);
 
 const rawBookData = [
   {
@@ -48,18 +48,9 @@ bookList.add({
   publication_year: 1922,
 });
 
-console.log(bookList.at(2).get('title'));
-console.log(bookList.get('c2').get('title'));
 
-bookList.forEach((book) => {
-  console.log(`${book.get('title')} by ${book.get('author')}`);
-});
 
-const newBooks = bookList.filter((book) => book.get('publication_year') > 2000);
 
-newBooks.forEach((book) => {
-  console.log(`New Book:  ${book.get('title')} by ${book.get('author')} `);
-});
 
 // Starts undefined - we'll set this in $(document).ready
 // once we know the template is available
@@ -82,20 +73,27 @@ bookList.forEach((book) => {
   // Append with the template the book to the DOM
 };
 
+// Listening for a Backbone Event
+
+// 1.  Create an Event Listener
+
+const bogusListener = function bogusListener(event)  {
+  console.log('Event Occured!');
+  console.log(event);
+  console.log(this);
+};
+
+// 2.  Register the Event Handler with the Component
+bookList.on('bogus', bogusListener,  bookList);
+
+// 3.  Trigger the event
+bookList.trigger('bogus', 'Argument!');
+
+
 $(document).ready(() => {
   bookTemplate = _.template($('#book-template').html());
 
-  $('#book-list').append(bookTemplate( {
-    title: 'You don\'t know JS',
-    author: 'Kyle Simpson',
-    publication_year: 2008,
-  } ));
-
-  $('#book-list').append(bookTemplate(codingInterview.attributes));
-
-  $('#book-list').append($(bookTemplate(codingInterview.toJSON())));
-
-  render(bookList);
+    render(bookList);
 
 
 
