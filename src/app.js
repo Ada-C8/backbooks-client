@@ -9,6 +9,7 @@ import _ from 'underscore';
 // Our components
 import BookList from './collections/book_list';
 
+const BOOK_FIELDS = ['title', 'author', 'publication_year'];
 const rawBookData = [
   {
     title: 'Practical Object-Oriented Design in Ruby',
@@ -40,15 +41,18 @@ const render = function render(bookList) {
     const generatedHTML = bookTemplate(book.attributes);
     bookTableElement.append(generatedHTML);
   });
+
+  // Provide visual feedback for sorting
+  $('th.sort').removeClass('current-sort-field');
+  $(`th.sort.${ bookList.comparator }`).addClass('current-sort-field');
 };
 
 const addBookHandler = function(event) {
   event.preventDefault();
-  
-  const bookData = {};
-  const BOOK_FIELDS = ['title', 'author', 'publication_year'];
 
+  const bookData = {};
   BOOK_FIELDS.forEach((field) => {
+    // select the input corresponding to the field we want
     const inputElement = $(`#add-book-form input[name="${ field }"]`);
     const value = inputElement.val();
     bookData[field] = value;
@@ -68,29 +72,20 @@ $(document).ready(() => {
   render(bookList);
 
   bookList.on('update', render);
+  bookList.on('sort', render);
 
-  const book = bookList.add({
-    title: 'Ancillary Justice',
-    author: 'Ann Leckie',
-    publication_year: 2013,
-    page_count: 12334
-  });
-
+  // Listen for when the user adds a book
   $('#add-book-form').on('submit', addBookHandler);
 
+  // Add a click handler for each of the table headers
+  // to sort the table by that column
+  BOOK_FIELDS.forEach((field) => {
+    const headerElement = $(`th.sort.${ field }`);
+    headerElement.on('click', (event) => {
+      console.log(`Sorting table by ${ field }`);
+      bookList.comparator = field;
+      bookList.sort();
+    });
+  });
 
-
-
-
-
-  //
-  // render(bookList);
-  //
-  // const testHandler = function(eventData, second) {
-  //   console.log('In the test handler');
-  //   console.log(eventData);
-  //   console.log(second);
-  // };
-  // bookList.on('test', testHandler, bookList);
-  // bookList.trigger('test', 'message1', 'message2');
 });
