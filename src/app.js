@@ -17,6 +17,24 @@ const bookList = new BookList();
 // once we know the template is available
 let bookTemplate;
 
+// Clear status messages
+const clearStatus = function clearStatus() {
+  $('#status-messages ul').html('');
+  $('#status-messages').hide();
+};
+
+// Add a new status message
+const reportStatus = function reportStatus(status, message) {
+  console.log(`Reporting ${ status } status: ${ message }`);
+
+  // Should probably use an Underscore template here.
+  const statusHTML = `<li class="${ status }">${ message }</li>`;
+
+  // note the symetry with clearStatus()
+  $('#status-messages ul').append(statusHTML);
+  $('#status-messages').show();
+};
+
 const render = function render(bookList) {
   // iterate through the bookList, generate HTML
   // for each model and attatch it to the DOM
@@ -50,13 +68,29 @@ const addBookHandler = function(event) {
   console.log(bookData);
 
   const book = bookList.add(bookData);
+
+  // The first argument to .save is the attributes to save.
+  // If we leave it blank, it will save all the attributes!
+  // (Think of model.update in Rails, where it updates the
+  // model and saves to the DB in one step). We need the second
+  // argument for callbacks, so we pass in {} for the first.
   book.save({}, {
     success: (model, response) => {
       console.log('Successfully saved book!');
+      reportStatus('success', 'Successfully saved book!');
     },
     error: (model, response) => {
       console.log('Failed to save book! Server response:');
       console.log(response);
+
+      // Since these errors come from a Rails server, the strucutre of our
+      // error handling looks very similar to what we did in Rails.
+      const errors = response.responseJSON["errors"];
+      for (let field in errors) {
+        for (let problem of errors[field]) {
+          reportStatus('error', `${field}: ${problem}`);
+        }
+      }
     },
   });
 };
@@ -88,4 +122,5 @@ $(document).ready(() => {
     });
   });
 
+  $('#status-messages button.clear').on('click', clearStatus);
 });
