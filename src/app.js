@@ -51,9 +51,7 @@ const render = function render(bookList) {
   $(`th.sort.${ bookList.comparator }`).addClass('current-sort-field');
 };
 
-const addBookHandler = function(event) {
-  event.preventDefault();
-
+const readFormData = function readFormData() {
   const bookData = {};
   BOOK_FIELDS.forEach((field) => {
     // select the input corresponding to the field we want
@@ -72,7 +70,23 @@ const addBookHandler = function(event) {
   console.log("Read book data");
   console.log(bookData);
 
-  const book = bookList.add(bookData);
+  return bookData;
+};
+
+const handleValidationFailures = function handleValidationFailures(errors) {
+  // Since these errors come from a Rails server, the strucutre of our
+  // error handling looks very similar to what we did in Rails.
+  for (let field in errors) {
+    for (let problem of errors[field]) {
+      reportStatus('error', `${field}: ${problem}`);
+    }
+  }
+};
+
+const addBookHandler = function(event) {
+  event.preventDefault();
+
+  const book = bookList.add(readFormData());
 
   // The first argument to .save is the attributes to save.
   // If we leave it blank, it will save all the attributes!
@@ -92,22 +106,13 @@ const addBookHandler = function(event) {
       // book from the list
       bookList.remove(model);
 
-      // Since these errors come from a Rails server, the strucutre of our
-      // error handling looks very similar to what we did in Rails.
-      const errors = response.responseJSON["errors"];
-      for (let field in errors) {
-        for (let problem of errors[field]) {
-          reportStatus('error', `${field}: ${problem}`);
-        }
-      }
+      handleValidationFailures(response.responseJSON["errors"]);
     },
   });
 };
 
 $(document).ready(() => {
   bookTemplate = _.template($('#book-template').html());
-
-
 
   console.log(`About to fetch data from ${ bookList.url }`);
 
