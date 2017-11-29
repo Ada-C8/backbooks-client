@@ -8,22 +8,6 @@ import './style.css';
 import Book from './models/book';
 import BookList from './collections/book_list';
 
-
-const someBook = new Book({
-  title: "This is the Story of a Girl",
-  publication_year: 1970,
-});
-
-console.log("The value of author on some book is:");
-console.log(someBook.get('author'));
-console.log("The value of age on some book is:");
-console.log(someBook.age());
-console.log("This is my toString() by just calling someBook");
-console.log(someBook);
-console.log("~~~ toString by calling toString() explicitly");
-console.log(someBook.toString());
-
-
 const bookList = new BookList();
 let bookTemplate;
 
@@ -112,8 +96,6 @@ const events = {
 
 
 $(document).ready(() => {
-  $('header').append(`<h2>${someBook}</h2>`);
-
   bookTemplate = _.template($('#book-template').html());
   $('#add-book-form').submit(events.addBook);
   $('.sort').click(events.sortBooks);
