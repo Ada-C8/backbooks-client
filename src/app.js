@@ -48,14 +48,23 @@ const events = {
       }
     });
     const book = new Book(bookData);
-    console.log("This is the new book");
-    console.log(book);
-    console.log(book.attributes);
-    bookList.add(book);
-    book.save({}, {
-      success: events.successfullSave,
-      error: events.failedSave,
-    });
+
+    if (book.isValid()) {
+      bookList.add(book);
+      book.save({}, {
+        success: events.successfullSave,
+        error: events.failedSave,
+      });
+    } else {
+      // getting here means there were client-side validation errors reported
+      console.log("What's on book in an invalid book?");
+      console.log(book);
+      // TODO: refactor what gets appended
+      // hardcoded error that assumes title has an error on it
+      $('#status-messages ul').append(`<li>Error returned by client-side validations! ${book.validationError['title'][0]}`);
+      $('#status-messages').show();
+    }
+
   },
   sortBooks(event) {
     $('.current-sort-field').removeClass('current-sort-field');
