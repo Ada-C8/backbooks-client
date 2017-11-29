@@ -21,6 +21,41 @@ const Book = Backbone.Model.extend({
   // },
 
 
+  // book.save({ title: 'foo' }, {success: () => {} })
+
+  validate(attributes) {
+    // Note the argument. We will read attribute values from
+    // here instead of calling this.get()
+
+    // Format of errors: same as Rails!
+    // {
+    //   title: ['cannot be blank', 'already taken'],
+    //   author: ['cannot be blank']
+    // }
+
+    const errors = {};
+    if (!attributes.title) {
+      errors.title = ['cannot be blank'];
+    }
+
+    if (!attributes.author) {
+      errors.author = ['cannot be blank'];
+    }
+
+    if (!attributes.publication_year) {
+      errors.publication_year = ['cannot be blank'];
+    } else if (attributes.publication_year < 1000 ||
+      attributes.publication_year > (new Date()).getFullYear()) {
+      errors.publication_year = ['must be between 1000 and the current year'];
+    }
+
+    if (Object.keys(errors).length < 1) {
+      return false;
+    }
+    return errors;
+  },
+
+
 
   age() {
     return (new Date()).getFullYear() - this.get('publication_year');

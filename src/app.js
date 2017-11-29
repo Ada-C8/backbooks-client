@@ -7,6 +7,7 @@ import $ from 'jquery';
 import _ from 'underscore';
 
 // Our components
+import Book from './models/book';
 import BookList from './collections/book_list';
 
 const BOOK_FIELDS = ['title', 'author', 'publication_year'];
@@ -86,7 +87,14 @@ const handleValidationFailures = function handleValidationFailures(errors) {
 const addBookHandler = function(event) {
   event.preventDefault();
 
-  const book = bookList.add(readFormData());
+  const book = new Book(readFormData());
+
+  if (!book.isValid()) {
+    handleValidationFailures(book.validationError);
+    return;
+  }
+
+  bookList.add(book);
 
   // The first argument to .save is the attributes to save.
   // If we leave it blank, it will save all the attributes!
