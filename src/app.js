@@ -59,7 +59,12 @@ const addBookHandler = function(event) {
     // select the input corresponding to the field we want
     const inputElement = $(`#add-book-form input[name="${ field }"]`);
     const value = inputElement.val();
-    bookData[field] = value;
+
+    // Don't take empty strings, so that Backbone can
+    // fill in default values
+    if (value != '') {
+      bookData[field] = value;
+    }
 
     inputElement.val('');
   });
@@ -83,6 +88,10 @@ const addBookHandler = function(event) {
       console.log('Failed to save book! Server response:');
       console.log(response);
 
+      // Server-side validations failed, so remove this bad
+      // book from the list
+      bookList.remove(model);
+
       // Since these errors come from a Rails server, the strucutre of our
       // error handling looks very similar to what we did in Rails.
       const errors = response.responseJSON["errors"];
@@ -97,6 +106,8 @@ const addBookHandler = function(event) {
 
 $(document).ready(() => {
   bookTemplate = _.template($('#book-template').html());
+
+
 
   console.log(`About to fetch data from ${ bookList.url }`);
 
