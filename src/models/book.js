@@ -9,8 +9,8 @@ const Book = Backbone.Model.extend({
     // console.log(`In initialize: for the book ${ this.get('title') }`);
   },
   validate: function(attributes) {
-    console.log("What are the attributes in validate()?");
-    console.log(attributes);
+    // console.log("What are the attributes in validate()?");
+    // console.log(attributes);
     const errors = {};
 
     if (!attributes.title) {
@@ -34,8 +34,8 @@ const Book = Backbone.Model.extend({
       errors['publication_year'] = ["Publication Year must be a valid year"];
     }
 
-    console.log("What are the errors?");
-    console.log(errors);
+    // console.log("What are the errors?");
+    // console.log(errors);
 
     if ( Object.keys(errors).length > 0 ) {
       return errors;

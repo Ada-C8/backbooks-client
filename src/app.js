@@ -37,6 +37,23 @@ const render = function render(bookList) {
 
 const fields = ['title', 'author', 'publication_year'];
 
+const updateStatusMessageFrom = (messageHash) => {
+  $('#status-messages ul').empty();
+  for(let messageType in messageHash) {
+    messageHash[messageType].forEach((message) => {
+      $('#status-messages ul').append($(`<li>${messageType}:  ${message}</li>`));
+      console.log(`<li>${messageType}:  ${message}</li>`);
+    })
+  }
+  $('#status-messages').show();
+}
+
+const updateStatusMessageWith = (message) => {
+  $('#status-messages ul').empty();
+  $('#status-messages ul').append(`${message}</li>`);
+  $('#status-messages').show();
+}
+
 const events = {
   addBook(event) {
     event.preventDefault();
@@ -57,12 +74,9 @@ const events = {
       });
     } else {
       // getting here means there were client-side validation errors reported
-      console.log("What's on book in an invalid book?");
-      console.log(book);
-      // TODO: refactor what gets appended
-      // hardcoded error that assumes title has an error on it
-      $('#status-messages ul').append(`<li>Error returned by client-side validations! ${book.validationError['title'][0]}`);
-      $('#status-messages').show();
+      // console.log("What's on book in an invalid book?");
+      // console.log(book);
+      updateStatusMessageFrom(book.validationError);
     }
 
   },
@@ -87,18 +101,10 @@ const events = {
     });
   },
   successfullSave(book, response) {
-    $('#status-messages ul').empty();
-    $('#status-messages ul').append(`<li>${book.get('title')} added!</li>`);
-    $('#status-messages').show();
+    updateStatusMessageWith(`${book.get('title')} added!`)
   },
   failedSave(book, response) {
-    $('#status-messages ul').empty();
-    for(let key in response.responseJSON.errors) {
-      response.responseJSON.errors[key].forEach((error) => {
-        $('#status-messages ul').append(`<li>${key}:  ${error}</li>`);
-      })
-    }
-    $('#status-messages').show();
+    updateStatusMessageFrom(response.responseJSON.errors);
     book.destroy();
   },
 };
