@@ -115,6 +115,16 @@ const events = {
     console.log('ERROR!');
     console.log(book);
     console.log(response);
+    $('#status-messages ul').empty();
+    console.log(response.responseJSON.errors);
+    for(let key in response.responseJSON.errors) {
+      response.responseJSON.errors[key].forEach((error) => {
+        $('#status-messages ul').append(`<li>${key}:  ${error}</li>`);
+      })
+    }
+    $('#status-messages').show();
+    book.destroy();
+
   },
 };
 
