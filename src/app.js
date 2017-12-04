@@ -50,7 +50,7 @@ const updateStatusMessageFrom = (messageHash) => {
 
 const updateStatusMessageWith = (message) => {
   $('#status-messages ul').empty();
-  $('#status-messages ul').append(`${message}</li>`);
+  $('#status-messages ul').append(`<li>${message}</li>`);
   $('#status-messages').show();
 }
 
